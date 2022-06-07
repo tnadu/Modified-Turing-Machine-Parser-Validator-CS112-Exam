@@ -50,7 +50,7 @@ def validate():
     index = 1
     for transition in transitions:
         # verification of the first implied condition => existence of Start, Accept, Reject states
-        if transition[0] == q0 or transition[3] == q0:  # if so, then the list contains a start state
+        if transition[0] == q0:  # if so, then the list contains a start state
             Start = True
         if transition[3] == qA:  # if so, then the list contains an accept state
             Accept = True
@@ -74,12 +74,12 @@ def validate():
             return False
 
         # we check whether or not the second element of the current tuple is a letter from sigma
-        elif transition[1] not in sigma:
-            print(f"Error tuple #{index}: second element of each transition must be a member of sigma")
+        elif transition[1] not in sigma and transition[1] not in gamma:
+            print(f"Error tuple #{index}: second element of each transition must be a member of gamma")
             return False
 
         # we check whether or not the third element of the current tuple is a letter from gamma
-        elif transition[2] not in gamma:
+        elif transition[2] not in sigma and transition[2] not in gamma:
             print(f"Error tuple #{index}: third element of each transition must be a member of gamma")
             return False
 
@@ -89,12 +89,12 @@ def validate():
             return False
 
         # we check whether or not the fifth element of the current tuple is a letter from sigma
-        elif transition[4] not in sigma:
+        elif transition[4] not in sigma and transition[4] not in gamma:
             print(f"Error tuple #{index}: fifth element of each transition must be a member of sigma")
             return False
 
         # we check whether or not the sixth element of the current tuple is a letter from gamma
-        elif transition[5] not in gamma:
+        elif transition[5] not in sigma and transition[5] not in gamma:
             print(f"Error tuple #{index}: sixth element of each transition must be a member of gamma")
             return False
         index += 1
@@ -121,7 +121,7 @@ def validate():
     # we check whether or not there are any letters from gamma,
     # different form the intersection of the two sets, within sigma
     # because sigma alphabet must not contain any letters from gamma
-    if set(sigma).intersection(set(gamma))==set(sigma):
+    if set(sigma).intersection(set(gamma)):
         print("Error: sigma alphabet must not contain elements from gamma")
         return False
     print("Sigma status: OK!")
@@ -129,12 +129,6 @@ def validate():
     print()
     # beginning verification of the given gamma list
     print("Verifying the TM gamma alphabet...")
-
-    # we check whether or not gamma's length is bigger than sigma's with at least one symbol
-    # which is considered the "blank symbol", used in delimitation of the inputs
-    if len(gamma)<=len(sigma):
-        print("Error: gamma's length is too small")
-        return False
 
     # we check whether or not the blank symbol is in gamma
     if blank not in gamma:
