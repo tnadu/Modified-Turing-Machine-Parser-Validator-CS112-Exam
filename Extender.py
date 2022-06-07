@@ -9,11 +9,14 @@ blank="_"
 tape1=[]
 tape2=[]
 
+def simulate():
+    return True, 0
+
 # we reached an accept state, thereby we are entitled to ask for other verification using the second tape of the TM
 # to do so, we need to extend the delta function in order to verify whether or not the tapes are identical
 # if the tapes are, indeed, identical, the given word is accepted
 # otherwise, the given word is rejected
-def Extended():
+def extended(i):
     global states, sigma, gamma, transitions, blank, q0, qA, qR, tape1, tape2
 
     # we begin by extending the delta function
@@ -23,7 +26,7 @@ def Extended():
     states.append(qBack)
     transitions[qBack] = {}
 
-    qVerify = "qVerif" # this state indicates that the TM is currently verifying whether or not the tapes are equal
+    qVerify = "qVerify" # this state indicates that the TM is currently verifying whether or not the tapes are equal
     states.append(qVerify)
     transitions[qVerify] = {}
 
@@ -31,6 +34,10 @@ def Extended():
     states.append(qAccept)
     qReject = "qReject" # this is the final reject state
     states.append(qReject)
+
+    q = qA
+    qA = qAccept
+    qR = qReject
 
     blank1 = '( ͡° ͜ʖ ͡°)'
 
@@ -68,7 +75,8 @@ def Extended():
     tape1 = tape1.insert(0, blank1)
     tape2 = tape2.insert(0, blank1)
 
-    i+=1    # i-ul trebuie declarat global
 
-    global q, i
-    while q!=qReject and q!=qAccept:
+    i+=1    # compensating the insertion of the leftmost blank space
+    if simulate(i, q)[0]:
+        return True
+    return False

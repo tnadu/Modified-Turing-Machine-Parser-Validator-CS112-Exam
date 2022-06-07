@@ -32,12 +32,12 @@ for oldTransition in oldTransitions:
 tape1 = word.split('').append(blank)
 tape2 = word.split('').append(blank)
 
+def extended():
+    return True
 
 # simulation function
-def simulate():
+def simulate(i, q):    # i - current head position; q - current state
     global states, sigma, gamma, transitions, blank, q0, qA, qR
-    i = 0  # current head position
-    q = q0  # current state
     
     while q != qA and q != qR:  # TM halts only if it enters a final state (accept/reject)
         # check if current state transitions into another state
@@ -62,10 +62,18 @@ def simulate():
                 i -= 1
 
     if q == qA:     # TM entered the accept state
-        return True
-    return False    # TM entered the reject state
+        return True, i
+    return False, i    # TM entered the reject state
 
-if simulate():
+i = 0
+accepted = False
+accepted, i = simulate(0, q0)
+
+if accepted:
     print(f"The word '{word}' was accepted by the turing machine!")
+    if extended(i)[0]:
+        print(f"No storage errors detected!")
+    else:
+        print(f"Storage errors detected!")
 else:
     print(f"The word '{word}' was not accepted by the turing machine!")
