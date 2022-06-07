@@ -33,115 +33,217 @@ transitions = lista de 7-tupluri de string-uri
 '''
 
 import string
+import sys
 
-sigma = []  # lista de caractere
-blankSymbol = ""  # _B
-gamma = []  # lista de caractere
-states = []  # lista de caractere
-qA = ""  # string, accept state
-qR = ""  # string, reject state
-q0 = ""  # string, start state
-transitions = []  # lista de 7-tupluri de string-uri
+sigma = []
+blank = ""  # blank symbol
+gamma = []
+states = []
+qA = ""  # accept state
+qR = ""  # reject state
+q0 = ""  # start state
+transitions = []
 
-configFile = open("config.txt", "r")
 
-lines = configFile.readlines()
+if len(sys.argv) == 1:  # 1st case: only python file name passed as argument in CLI
+    print("Error: no arguments given\nUse the keyword 'help' as an argument for usage instructions")
+    quit()
+elif len(sys.argv) == 2 and sys.argv[1] == 'help':  # 2nd case: help menu
+    print()
+    # help CLI function
+    quit()
+elif len(sys.argv) == 2:  # 3rd case: only config file name passed as argument in CLI, no word passed for validation
+    print('No word received for validation\nChecking validity of config file...')
+elif len(sys.argv) == 3:  # 4th case: both config file name and word passed as arguments in CLI
+    print('Checking validity of config file...')
+    word = sys.argv[2]
+else:  # 5th case: too many arguments passed in CLI
+    print('Error: Too many arguments')
+    quit()
 
-'''
-Edi:
-- sigma: stringul sa contina doar 0-9a-zA-Z; sa nu fie gol
-- gamma: stringul sa contina doar 0-9a-zA-Z; sa nu fie gol; contine doar ce are in plus fata de sigma
-'''
+configFileName = sys.argv[1]
+try:
+    configFile = open(configFileName)
+except:
+    print(f"Error: Invalid config file: '{configFileName}'")
+    quit()
+
+lines = configFile.readlines()  # the lines of the file will be traversed iteratively
 i = 0
-while i < len(lines):
+
+# ignore 'comment' lines
+while(line.strip()[0] == '#'):
+    if i == len(lines) - 1:     # end of file reached before complete data extraction
+        print('Format error: end of file reached before sigma section')
+        quit()
+    i += 1
     line = lines[i]
-    # tripping spaces and newlines
-    line.rstrip(" \n")
-    # verify that the line is not a comment,newline, or end of a block description
-    if line[0] != "#" and line[0] != "\n" and line != "End":
-        if line == "Sigma:":
-            while (line != "End"):
-                i += 1
-                # checking if sigma was defined earlier and there is a valid input
-                if len(sigma) != 0 and line != "#" and line != "\n":
-                    line.rstrip(" \n")
-                    for char in line:
-                        if char in string.ascii_letters or char in string.digits:
-                            sigma.append(char)
-                        else:
-                            raise Exception("sigma must have only letters or digit symboles")
-            # checking if sigma has any inputs
-            if len(sigma) == 0:
-                raise Exception("sigma must have at least one symbole")
 
-        if line == "Gamma:":
-            while (line != "End"):
-                i += 1
-                line = lines[i]
-                # checking if gamma was definer earlier
-                if len(gamma) != 0:
-                    line = lines[i]
-                    line.rstrip(" \n")
-                    for char in line:
-                        if char in sigma:
-                            raise Exception("gamma input must differ from sigma")
-                        elif char in string.ascii_letters or char in string.digits:
-                            gamma.append(char)
-                        else:
-                            raise Exception("gamma must have only letters or digit symboles")
+if line == "Sigma:":
+    while (line != "End"):
+        if i == len(lines) - 1:     # end of file reached before complete data extraction
+            print('Format error: end of file reached before sigma section ending')
+            quit()
+        i += 1
+        line = lines[i]
 
-            else:
-                if blankSymbole != None:
-                    line = line.strip()
-                    if len(line == 2) and line[1] in 'Bb':
-                        blankSymbole = line
-        if len(gamma) == 0:
-            raise Exception("gamma must have at least one symbole")
+        if line.strip()[0] != "#":   # line is not a 'comment' line
+            # verifying each character is alphanumerical
+            for char in line.strip():
+                if char in string.ascii_letters or char in string.digits:
+                    sigma.append(char)
+                else:
+                    raise Exception(f"Format error: '{char}' is not alphanumerical")
 
-    if line == "States":
-        while (line != "End"):
-            i += 1
-            line = lines[i].rstrip(" \n")
-            # checking if states was defined earlier
-            for char in line[0]:
-                if char not in string.ascii_letters or char not in string.digits:
-                    raise Exception("state must contain only digits and letters")
-                if char in " ":
-                    raise Exception("state must not contain spaces")
-            if len(states) != 0:
-                line = line.strip()
-                if len(line) > 1:
-                    if line[1] == 'S' or line[1] == 's':
-                        if len(q0) != 0:
-                            raise Exception("Turing Machine must have only one initial state instance")
-                        q0 = line[0]
-                    elif line[1] == 'A' or line[1] == 'a':
-                        if len(qA) != 0:
-                            raise Exception("Turing Machine must have only one acceptance state instance")
-                        qA = line[0]
-                    elif line[1] == 'R' or line[1] == 'r':
-                        if len(q0) != 0:
-                            raise Exception("Turing Machine must have only one reject state instance")
-                        qR = line[0]
+    if len(sigma) == 0:
+        raise Exception("Format error: sigma cannot be empty")
+else:   # sigma section expected immediately after comment lines
+    print(f"Format error: sigma section expected before:\n'{line}'")
+
+
+# ignore 'comment' lines
+while(line.strip()[0] == '#'):
+    if i == len(lines) - 1:     # end of file reached before complete data extraction
+        print('Format error: end of file reached before sigma section')
+        quit()
+    i += 1
+    line = lines[i]
+
+
+if line == "Gamma:":
+    while (line != "End"):
+        if i == len(lines) - 1:     # end of file reached before complete data extraction
+            print('Format error: end of file reached before gamma section ending')
+            quit()
+        i += 1
+        line = lines[i]
+
+        if line.strip()[0] != "#":  # line is not a 'comment' line
+            line = line.split(' ')
+            if len(line) == 1:  # a single string found
+                if len(line[0])!=1:     # gamma letter consists of multiple characters
+                    raise Exception(f"Format error: gamma letters must consist of a single character")
+                else:
+                    # verifying character is alphanumerical
+                    if line[0] in string.ascii_letters or line[0] in string.digits:
+                        gamma.append(line[0])
                     else:
-                        raise Exception("state must have associated symbol")
+                        raise Exception(f"Format error: '{line[0]}' is not alphanumerical")
 
-    '''- transitions: 7 tuplu (split cu spatiu),
-    ultimul caracter este R/r/L/l
-    '''
-    if line == "Transitions":
-        if len(states) != 0:
-            while (line != "End"):
-                i += 1
-                line = lines[i].rstrip(" \n")
-                # checking if transitions was definer earlier
-                trans = ()
-                line = line.strip()
-                if len(line) != 7:
-                    raise Exception("transitions must have 7 parameters")
-                if line[6] not in "RrLl":
-                    raise Exception("last parameter of transition must be the direction R/r/L/l")
-                for char in line:
-                    trans.append(char)
-                transitions.append(trans)
-i += 1
+            elif len(line) == 2:    # two strings found, separated by a space
+                if len(line[0]) != 1 or line[1].lower() != 'b':     # gamma letter consists of multiple characters or marking string is not B/b
+                    raise Exception(f"Format error: '{' '.join(line)}' is not valid gamma section syntax")
+                elif blank:         # blank symbol was already stored
+                    raise Exception(f"Error: blank symbol must be unique")
+                else:
+                    # verifying character is alphanumerical
+                    if line[0] in string.ascii_letters or line[0] in string.digits:
+                        blank = line[0]
+                        gamma.append(line[0])
+                    else:
+                        raise Exception(f"Format error: '{line[0]}' is not alphanumerical")
+
+            else:   # bad syntax
+                raise Exception(f"Format error: '{' '.join(line)}' is not valid gamma section syntax")
+
+    if len(gamma) == 0:
+        raise Exception("Error: gamma cannot be empty")
+else:   # gamma section expected immediately after comment lines
+    print(f"Format error: gamma section expected before:\n'{line}'")
+
+
+# ignore 'comment' lines
+while(line.strip()[0] == '#'):
+    if i == len(lines) - 1:
+        print('Format error: end of file reached before sigma section')
+        quit()
+    i += 1
+    line = lines[i]
+
+
+if line == "States:":
+    while (line != "End"):
+        if i == len(lines) - 1:     # end of file reached before complete data extraction
+            print('Format error: end of file reached before states section ending')
+            quit()
+        i += 1
+        line = lines[i]
+
+        if line.strip()[0] != "#":
+            line = line.split(' ')
+            if len(line) == 1:
+                for char in line[0]:
+                    if char not in string.ascii_letters and char not in string.digits:
+                        raise Exception(f"Format error: '{char}' is not alphanumerical")
+
+                states.append(line[0])
+
+            elif len(line) == 2:
+                if line[1].lower() == 's':
+                    if q0:
+                        raise Exception(f"Error: start state must be unique")
+                    else:
+                        q0 = line[0]
+                        states.append(line[0])
+
+                if line[1].lower() == 'a':
+                    if qA:
+                        raise Exception(f"Error: accept state must be unique")
+                    else:
+                        qA=line[0]
+                        states.append(line[0])
+
+                if line[1].lower() == 'r':
+                    if qR:
+                        raise Exception(f"Error: reject state must be unique")
+                    else:
+                        qR = line[0]
+                        states.append(line[0])
+
+                else:
+                    raise Exception(f"Format error: '{' '.join(line)}' is not valid states section syntax")
+
+    if len(states)==0:
+        raise Exception(f'Error: states cannot be empty')
+
+else:
+    print(f"Format error: states section expected before:\n'{line}'")
+
+
+# ignore 'comment' lines
+while(line.strip()[0] == '#'):
+    if i == len(lines) - 1:
+        print('Format error: end of file reached before sigma section')
+        quit()
+    i += 1
+    line = lines[i]
+
+
+if line == "Transitions:":
+    while (line != "End"):
+        if i == len(lines) - 1:
+            print('Format error: end of file reached before sigma section')
+            quit()
+        i += 1
+        line = lines[i]
+
+        transition = tuple(line.split(' '))
+        if len(transition) != 7:
+            raise Exception("Error: transitions section entry must consist of 7 parameters")
+        elif transition[6].lower() not in "rl":
+            raise Exception("Format error: direction parameter must be either L(eft) or R(right)")
+        else:
+            transitions.append(transition)
+else:
+    print(f"Format error: transitions section expected before:\n'{line}'")
+
+# ignore 'comment' lines
+while(line.strip()[0] == '#'):
+    if i == len(lines) - 1:
+        break
+    i += 1
+    line = lines[i]
+
+if i != len(lines) - 1:
+    print('Format error: end of file already reached')
+    quit()
