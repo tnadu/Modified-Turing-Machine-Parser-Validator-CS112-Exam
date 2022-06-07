@@ -1,37 +1,3 @@
-'''
-The file format should be:
-
-Sigma:
-    string lipit (fiecare caracter e un element al lui sigma)
-    #->linie care incepe cu un # inseamna ca e comentariu, nu il bagam in seama
-End
-
-Gamma:
-    _$
-End
-
-States:
-    q0 (cuvinte formate din litere si cifre, fara spatii) S #(start)
-    q1
-    qA A #(accept)
-    qR R #(reject)
-End
-
-Transitions:
-    q0 a b qA c d R/r (right/left) (tuplu)
-End
-
-'''
-'''
-sigma = lista de caractere
-gamma = lista de caractere
-states = lista de caractere
-qA = string, accept state
-qR = string, reject state
-q0 = string, start state
-transitions = lista de 7-tupluri de string-uri
-'''
-
 import string
 import sys
 
@@ -70,6 +36,8 @@ except:
 
 lines = configFile.readlines()  # the lines of the file will be traversed iteratively
 i = 0
+
+# PARSING
 
 # ignore 'comment' lines
 while(line.strip()[0] == '#'):
@@ -250,12 +218,7 @@ if i != len(lines) - 1:
 
 
 
-
-
-
-
-
-
+# VALIDATION
 
 def validate():
     global states, sigma, gamma, transitions, blank, q0, qA, qR
@@ -390,10 +353,10 @@ def validate():
     print("This Turing Machine is valid!")
     return True
 
-if validate():
-    if not set(word).issubset(sigma):
-        print(f"Error: '{word}' must contain only characters of the input alphabet!")
 
+if validate():  # validation successful, so the program may proceed
+    if not set(word).issubset(sigma):   # word received for validation contains letters which aren't in sigma
+        print(f"Error: '{word}' must contain only characters of the input alphabet!")
 
     # since the way we designed the simulation process is dependent on a specific nested dictionary structure
     # the 7-tuple structure used to store the transitions must be converted to our designated data structure format
@@ -418,7 +381,8 @@ if validate():
     tape2 = word.split('').append(blank)
 
 
-    # simulation function
+    # SIMULATION
+
     def simulate(i, q):  # i - current head position; q - current state
         global states, sigma, gamma, transitions, blank, q0, qA, qR
 
@@ -449,6 +413,8 @@ if validate():
         return False, i  # TM entered the reject state
 
 
+    # EXTENDED FUNCTIONALITY
+
     # we reached an accept state, thereby we are entitled to ask for other verification using the second tape of the TM
     # to do so, we need to extend the delta function in order to verify whether or not the tapes are identical
     # if the tapes are, indeed, identical, the given word is accepted
@@ -472,7 +438,7 @@ if validate():
         qReject = "qReject"  # this is the final reject state
         states.append(qReject)
 
-        q = qA
+        q = qA  # storing the old accept state
         qA = qAccept
         qR = qReject
 
@@ -513,18 +479,20 @@ if validate():
         tape2 = tape2.insert(0, blank1)
 
         i += 1  # compensating the insertion of the leftmost blank space
+        # once the TM was modified, a second simulation begins from the
+        # old accept state, at the head position at which it initially stalled
         if simulate(i, q)[0]:
             return True
         return False
 
 
-    i = 0
-    accepted = False
+    i = 0               # stores the position at which the TM stalled
+    accepted = False    # stores whether the word was accepted or rejected
     accepted, i = simulate(0, q0)
 
-    if accepted:
+    if accepted:        # additional storage error checking performed only if the word was accepted
         print(f"The word '{word}' was accepted by the turing machine!")
-        if extended(i)[0]:
+        if extended(i):
             print(f"No storage errors detected!")
         else:
             print(f"Storage errors detected!")
