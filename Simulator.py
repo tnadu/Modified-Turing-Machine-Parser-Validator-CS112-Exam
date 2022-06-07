@@ -1,7 +1,11 @@
+word=''
+if not set(word).issubset(sigma):
+    print(f"Error: '{word}' must contain only characters of the input alphabet!")
+
 sigma = []
 gamma = []
 states = []
-qA = ''; qR = ''; q0 = '';
+qA = ''; qR = ''; q0 = ''
 blank = ''
 transitions = []
 
@@ -14,7 +18,7 @@ for oldTransition in oldTransitions:
     # are dependent on the current state and the contents of the tapes at the current head position (the domain), so it makes sense
     # to store them as tuples at the final level of our nested dictionaries, for convenient access
     # ----------------->       Q           x         Γ         x         Γ          x         {R/L}
-    currentTransition = (oldTransition[3], tuple([oldTransition[4], oldTransition[5]]), oldTransition[6])
+    currentTransition = tuple([oldTransition[3], tuple([oldTransition[4], oldTransition[5]]), oldTransition[6]])
 
     if oldTransition[0] not in transitions:  # the current state stored in oldTransition[0] hasn't been associated with a transition yet
         #  δ:              Q          x           Γ          x          Γ     ----->
@@ -23,17 +27,13 @@ for oldTransition in oldTransitions:
         #  δ:              Q          x           Γ          x          Γ     ----->
         transitions[oldTransition[0]][tuple([oldTransition[1], oldTransition[2]])] = currentTransition
 
-word = input('Enter a word for validation: ')
-while not set(word).issubset(sigma):
-    print(f"Error: '{word}' must contain only characters of the alphabet!")
-    word = input('Enter a word for validation: ')
 
 # initializing two identical tapes, consisting of the input string and the blank symbol
 tape1 = word.split('').append(blank)
 tape2 = word.split('').append(blank)
 
 
-# validation function
+# simulation function
 def simulate():
     global states, sigma, gamma, transitions, blank, q0, qA, qR
     i = 0  # current head position
