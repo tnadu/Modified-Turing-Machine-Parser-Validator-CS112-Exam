@@ -8,6 +8,8 @@ Sigma:
     # - a single line consisting of the alphabet letters concatenated
     # - the string can have as many whitespace characters as desired 
     # on either side
+    # - only alphanumerical characters and the '#' symbol are allowed 
+    # in the string (standard ASCII)
     # - example of Σ = {a, b, c, d}:
     abcd
 End

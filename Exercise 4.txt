@@ -32,6 +32,9 @@ Transitions:
    q1 a a q2 x x R
    q1 b b q3 x x R
    q1 # # q8 # # R
+   q8 _ _ qA _ _ L
+   q8 x x q8 _ _ R
+   q8 a a qR a a L
    q2 a a q2 a a R
    q2 b b q2 b b R
    q2 # # q4 # # R
