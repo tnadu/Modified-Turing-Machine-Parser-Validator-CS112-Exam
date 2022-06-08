@@ -1,0 +1,53 @@
+# sigma = {a, b, #}
+Sigma:
+    ab#
+End
+#
+# gamma = {a, b, #, _, x}
+Gamma:
+    _ B
+    x
+End
+#
+# Q = {q1, q2, q3, q4, q5, q6, q7, q8, qA, qR}
+# q1 = start state
+# qA = accept state
+# qR = reject state
+States:
+    q1 S
+    q2
+    q3 
+    q4 
+    q5 
+    q6 
+    q7 
+    q8
+    # (accept)
+    qA A
+    # (reject)
+    qR R 
+End
+#
+Transitions:
+   q1 a a q2 x x R
+   q1 b b q3 x x R
+   q1 # # q8 # # R
+   q2 a a q2 a a R
+   q2 b b q2 b b R
+   q2 # # q4 # # R
+   q4 x x q4 x x R
+   q4 a a q6 x x L
+   q3 a a q3 a a R
+   q3 b b q3 b b R 
+   q3 # # q5 # # R
+   q5 x x q5 x x R
+   q5 b b q6 x x L
+   q6 a a q6 a a L
+   q6 b b q6 b b L
+   q6 x x q6 x x L
+   q6 # # q7 # # L
+   q7 a a q7 a a L
+   q7 b b q7 b b L
+   q7 x x q1 x x R
+End
+#
