@@ -15,32 +15,30 @@ qA = ""  # accept state
 qR = ""  # reject state
 q0 = ""  # start state
 transitions = []
-# word = ""
+word = ""
 
-# if len(sys.argv) == 1:  # 1st case: only python file name passed as argument in CLI
-#     print("Error: no arguments given\nUse the keyword 'help' as an argument for usage instructions")
-#     quit()
-# elif len(sys.argv) == 2 and sys.argv[1] == 'help':  # 2nd case: help menu
-#     print(f'Usage: {sys.argv[0]} [<config file> / "help"] [<word> - optional]')
-#     quit()
-# elif len(sys.argv) == 2:  # 3rd case: only config file name passed as argument in CLI, no word passed for validation
-#     print('No word received for validation\nChecking validity of config file...')
-# elif len(sys.argv) == 3:  # 4th case: both config file name and word passed as arguments in CLI
-#     print('Checking validity of config file...')
-#     word = sys.argv[2]
-# else:  # 5th case: too many arguments passed in CLI
-#     print('Error: Too many arguments')
-#     quit()
-#
-# configFileName = sys.argv[1]
-# try:
-#     configFile = open(configFileName)
-# except:
-#     print(f"Error: Invalid config file: '{configFileName}'")
-#     quit()
+if len(sys.argv) == 1:  # 1st case: only python file name passed as argument in CLI
+    print("Use the keyword 'help' as an argument for usage instructions")
+    quit()
+elif len(sys.argv) == 2 and sys.argv[1] == 'help':  # 2nd case: help menu
+    print(f'Usage: {sys.argv[0]} [<config file> / "help"] [<word to be validated> - optional]')
+    quit()
+elif len(sys.argv) == 2:  # 3rd case: only config file name passed as argument in CLI, no word passed for validation
+    print('Warning: No word received for validation\nChecking validity of config file...')
+elif len(sys.argv) == 3:  # 4th case: both config file name and word passed as arguments in CLI
+    print('Checking validity of config file...')
+    word = sys.argv[2]
+else:  # 5th case: too many arguments passed in CLI
+    print('Error: Too many arguments')
+    quit()
 
-word = 'ab#ab'
-configFile = open('Exercise 4.txt')
+configFileName = sys.argv[1]
+try:
+    configFile = open(configFileName)
+except:
+    print(f"Error: Invalid config file: '{configFileName}'")
+    quit()
+
 lines = configFile.readlines()  # the lines of the file will be traversed iteratively
 i = 0
 line = lines[0].strip()
@@ -57,7 +55,7 @@ while (line[0] == '#'):
 
 if line == "Sigma:":
     if i == len(lines) - 1:  # end of file reached before complete data extraction
-        print('Format error: end of file reached before gamma section ending')
+        print('Format error: end of file reached before sigma section ending')
         quit()
     i += 1
     line = lines[i].strip()
@@ -74,13 +72,13 @@ if line == "Sigma:":
                     quit()
 
         if i == len(lines) - 1:  # end of file reached before complete data extraction
-            print('Format error: end of file reached before gamma section ending')
+            print('Format error: end of file reached before sigma section ending')
             quit()
         i += 1
         line = lines[i].strip()
 
     if i == len(lines) - 1:  # end of file reached before complete data extraction
-        print('Format error: end of file reached before gamma section ending')
+        print('Format error: end of file reached before sigma section ending')
         quit()
     i += 1
     line = lines[i].strip()
@@ -95,7 +93,7 @@ else:  # sigma section expected immediately after comment lines
 # ignore 'comment' lines
 while (line[0] == '#'):
     if i == len(lines) - 1:  # end of file reached before complete data extraction
-        print('Format error: end of file reached before sigma section')
+        print('Format error: end of file reached before gamma section')
         quit()
     i += 1
     line = lines[i].strip()
@@ -114,7 +112,6 @@ if line == "Gamma:":
             if len(line) == 1:  # a single string found
                 if len(line[0]) != 1:  # gamma letter consists of multiple characters
                     print(f"Format error: gamma letters must consist of a single character")
-                    print(line[0])
                     quit()
                 else:
                     gamma.append(line[0])
@@ -156,14 +153,14 @@ else:  # gamma section expected immediately after comment lines
 # ignore 'comment' lines
 while (line[0] == '#'):
     if i == len(lines) - 1:
-        print('Format error: end of file reached before sigma section')
+        print('Format error: end of file reached before states section')
         quit()
     i += 1
     line = lines[i].strip()
 
 if line == "States:":
     if i == len(lines) - 1:  # end of file reached before complete data extraction
-        print('Format error: end of file reached before gamma section ending')
+        print('Format error: end of file reached before states section ending')
         quit()
     i += 1
     line = lines[i].strip()
@@ -231,13 +228,13 @@ if line == "States:":
                 quit()
 
         if i == len(lines) - 1:  # end of file reached before complete data extraction
-            print('Format error: end of file reached before gamma section ending')
+            print('Format error: end of file reached before states section ending')
             quit()
         i += 1
         line = lines[i].strip()
 
     if i == len(lines) - 1:  # end of file reached before complete data extraction
-        print('Format error: end of file reached before gamma section ending')
+        print('Format error: end of file reached before states section ending')
         quit()
     i += 1
     line = lines[i].strip()
@@ -252,14 +249,14 @@ else:  # states section expected immediately after comment lines or after gamma 
 # ignore 'comment' lines
 while (line[0] == '#'):
     if i == len(lines) - 1:  # end of file reached before complete data extraction
-        print('Format error: end of file reached before sigma section')
+        print('Format error: end of file reached before transitions section')
         quit()
     i += 1
     line = lines[i].strip()
 
 if line == "Transitions:":
     if i == len(lines) - 1:  # end of file reached before complete data extraction
-        print('Format error: end of file reached before gamma section ending')
+        print('Format error: end of file reached before transitions section ending')
         quit()
     i += 1
     line = lines[i].strip()
@@ -276,13 +273,13 @@ if line == "Transitions:":
             transitions.append(transition)
 
         if i == len(lines) - 1:  # end of file reached before complete data extraction
-            print('Format error: end of file reached before sigma section')
+            print('Format error: end of file reached before transitions section')
             quit()
         i += 1
         line = lines[i].strip()
 
     if i == len(lines) - 1:  # end of file reached before complete data extraction
-        print('Format error: end of file reached before gamma section ending')
+        print('Format error: end of file reached before transitions section ending')
         quit()
     i += 1
     line = lines[i].strip()
@@ -304,46 +301,47 @@ if not commented:  # a line after the transitions section ending was not comment
     print(line)
     quit()
 
+print('Config file status: OK!')
+
 # VALIDATION
 
 def validate():
     global states, sigma, gamma, transitions, blank, q0, qA, qR
-    print("Beginning validation...")
 
     # beginning logic verification of the given list of states
-    print("Verifying the TM given states:")
+    print("Verifying states(Q)...")
     # a functional TM must have an initial state
-    if q0 == "":
+    if not q0:
         print("Error: the initial state must not be null")
         return False
 
     # a functional TM must have an accept state 
-    elif qA == "":
+    elif not qA:
         print("Error: the accept state must not be null")
         return False
 
     # a functional TM must have a reject state 
-    elif qR == "":
+    elif not qR:
         print("Error: the reject state must not be null")
         return False
 
     # each state within the given list of states must be one-of-a-kind in order to have a functional TM
     if len(states) != len(set(states)):
-        print("Error: each state within the list must be unique")
+        print("Error: each state must be unique")
         return False
     print("States status: OK!")
 
     # beginning verification of the given sigma list
-    print("Verifying the TM sigma alphabet...")
+    print("Verifying input alphabet(Σ)...")
 
     # sigma alphabet must not contain any letters from gamma - sigma
     if set(sigma).intersection(set(gamma)):
-        print("Error: sigma alphabet must not contain elements from gamma - sigma")
+        print("Error: sigma alphabet must be included in or equal to gamma alphabet")
         return False
     print("Sigma status: OK!")
 
     # beginning verification of the given gamma list
-    print("Verifying the TM gamma alphabet...")
+    print("Verifying tape alphabet(Γ)...")
 
     # we check whether or not the blank symbol was marked
     if blank not in gamma:
@@ -352,7 +350,7 @@ def validate():
     print("Gamma status: OK!")
 
     # beginning verification of the given transitions list
-    print("Verifying the TM transition function:")
+    print("Verifying transition function(δ):")
 
     # next, we verify the existence of all three important states (Start, Accept, Reject) within the list containing
     # 7-tuples. we also need to check whether or not each transition has the correct syntax, which is:
@@ -377,15 +375,17 @@ def validate():
         if transition[0] not in states:
             print(f"Error: at tuple #{index} of transitions - not a member of states")
             return False
+
         # we check whether or not the first position within the transition contains the accept state, which is incorrect
         # because the accept state is final
         elif transition[0] == qA:
             print(f"Error: at tuple #{index} of transitions - accept state is halting")
             return False
+
         # we check whether or not the first position within the transition contains the reject state, which is incorrect
         # because the reject state is final
         elif transition[0] == qR:
-            print(f"Error: at tuple #{index} of transitions - reject state is final")
+            print(f"Error: at tuple #{index} of transitions - reject state is halting")
             return False
 
         # we check whether or not the second element of the current tuple is a letter from gamma
@@ -415,14 +415,14 @@ def validate():
         index += 1
 
     # verification of the first implied condition => existence of Start, Accept, Reject states
-    if not Start:  # TM does not have an initial state
-        print("Error: this TM does not have a starting point within the given transitions")
+    if not Start:  # TM does not have an initial configuration
+        print("Error: there must be at least one start configuration")
         return False
     elif not Accept:  # TM does not have an accept state
-        print("Error: this TM does not reach any accept state")
+        print("Error: an accept configuration must be reachable")
         return False
     elif not Reject:  # TM does not have a reject state
-        print("Error: this TM does not reach ant reject state")
+        print("Error: a reject configuration must be reachable")
         return False
     print("Transitions status: OK!")
 
@@ -430,8 +430,7 @@ def validate():
     return True
 
 
-if validate():
-        # and len(sys.argv) == 3:  # validation successful and word received for validation, so the program may proceed
+if validate() and len(sys.argv) == 3:  # validation successful and word received for validation, so the program may proceed
     if not set(word).issubset(sigma):  # word received for validation contains letters which aren't in sigma
         print(f"Error: '{word}' must contain only characters of the input alphabet!")
 
@@ -472,21 +471,24 @@ if validate():
             if q not in transitions.keys() or aux not in transitions[q].keys():
                 q = qR
             else:
+                qOld = q    # storing last state, so it can be referred to later
                 # for q and the tuple consisting of the characters at position i on the tapes, the next state is stored on the 0th position of the tuple
-                qOld = q
                 q = transitions[q][tuple([tape1[i], tape2[i]])][0]
-                # for q and the tuple consisting of the characters at position i on the tapes, the tapes' contents to be copied
-                # are stored on the 1st position of the tuple; there, a 2-tuple is stored, consisting of the new tapes' contents
+
+                # storing last tapes' contents, to they can be referred to later
                 tape1Old = tape1[i]
                 tape2Old = tape2[i]
 
+                # for q and the tuple consisting of the characters at position i on the tapes, the tapes' contents to be copied
+                # are stored on the 1st position of the tuple; there, a 2-tuple is stored, consisting of the new tapes' contents
                 tape1[i] = transitions[qOld][tuple([tape1Old, tape2Old])][1][0]
                 tape2[i] = transitions[qOld][tuple([tape1Old, tape2Old])][1][1]
+
                 # for q and the tuple consisting of the characters at position i on the tapes,
                 # the direction the head moves next is stored on the 2nd position of the tuple
                 if transitions[qOld][tuple([tape1Old, tape2Old])][2].lower() == 'r':  # moving to the right
                     i += 1
-                    if i == len(tape1):
+                    if i == len(tape1):     # max tape length has been reached, so both tapes are extended
                         tape1.append(blank)
                         tape2.append(blank)
                 elif i != 0:  # moving to the left; i is decremented only if it is currently non-null (on the leftmost position of the tapes)
@@ -513,33 +515,30 @@ if validate():
         states.append(qBack)
         transitions[qBack] = {}
 
-        qVerify = "qVerify"  # this state is used to verify whether or not the tapes are identical
+        qVerify = "qVerify"  # this state is used to verify whether or not each tape squares are identical
         states.append(qVerify)
         transitions[qVerify] = {}
 
-        qAccept = "qAccept"  # this is the final accept state
+        qAccept = "qAccept"  # this is the new accept state
         states.append(qAccept)
-        qReject = "qReject"  # this is the final reject state
+        qReject = "qReject"  # this is the new reject state
         states.append(qReject)
 
         q = qA  # storing the old accept state
         qA = qAccept
         qR = qReject
 
-        blank1 = '( ͡° ͜ʖ ͡°)'  # second blank symbol used to differentiate between the ends of the input
+        blank1 = '( ͡° ͜ʖ ͡°)'  # second blank symbol used to differentiate between the leftmost and rightmost ends of the input
         # inserting leftmost blank symbol at the beginning of both tapes
         tape1.insert(0, blank1)
         tape2.insert(0, blank1)
 
         # the TM's head could either be within the string or at the end of it
-        # if the qA state is reached at the end of the string we begin moving backwards to the start of the input
-        transitions[q] = {tuple([blank, blank]) : tuple([qBack, tuple([blank, blank]), "L"])}
+        # if the old qA state is reached at the end of the string we begin moving backwards to the start of the input
+        transitions[q] = {tuple([blank, blank]): tuple([qBack, tuple([blank, blank]), "L"])}
 
         # then, when the leftmost blank symbol at the start of the input is reached, we move to qVerify
-        transitions[qBack] = {tuple([blank1, blank1]) : tuple([qVerify, tuple([blank1, blank1]), "R"]) }
-
-        # if we reach rightmost blank symbol, then the tapes are identical, thereby we move to the accept state
-        transitions[qVerify] = {tuple([blank, blank]) : tuple([qA, tuple([blank, blank]), "L"]) }
+        transitions[qBack] = {tuple([blank1, blank1]): tuple([qVerify, tuple([blank1, blank1]), "R"]) }
 
         for letter in sigma:
             # if qA is reached within the string we need to have transitions for each letter of sigma
@@ -580,10 +579,11 @@ if validate():
                 if different_letter != letter:
                     transitions[q][tuple([letter, different_letter])] = tuple([qReject, tuple([blank, blank]), "R"])
                     transitions[qBack][tuple([letter, different_letter])] = tuple([qReject, tuple([blank, blank]), "R"])
-                    if letter != blank:
-                        transitions[qVerify][tuple([letter, different_letter])] = tuple([qReject, tuple([blank, blank]), "R"])
+                    transitions[qVerify][tuple([letter, different_letter])] = tuple([qReject, tuple([blank, blank]), "R"])
 
-        print(transitions)
+        # if we reach rightmost blank symbol, then the tapes are identical, thereby we move to the accept state
+        transitions[qVerify][tuple([blank, blank])] = tuple([qA, tuple([blank, blank]), "L"])
+
         i += 1  # compensating the insertion of the leftmost blank space
         # once the TM was modified, a second simulation begins from the
         # old accept state, at the head position at which it initially stalled
@@ -592,8 +592,7 @@ if validate():
         return False
 
 
-    i = 0  # stores the position at which the TM stalled
-    accepted = False  # stores whether the word was accepted or rejected
+    # i - stores the position at which the TM stalled; accepted - stores whether the word was accepted or rejected
     accepted, i = simulate(0, q0, tape1, tape2)
 
     if accepted:  # additional storage error checking performed only if the word was accepted
